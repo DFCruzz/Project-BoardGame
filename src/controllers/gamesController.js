@@ -16,21 +16,19 @@ export async function addNewGame (req, res) {
 
     try {
 
-        const isNameAvailable = await database.query(
+        const isGameListed = await database.query(
             `SELECT * FROM games WHERE name = $1`, [name]   
         )
 
-        if(isNameAvailable.rowCount > 0) {
+        if(isGameListed.rowCount > 0) {
             return res.status(400).send("Jogo já cadastrado!")
         }
 
         await database.query(
             `INSERT INTO games (name, image, "stockTotal", "pricePerDay") VALUES ($1, $2, $3, $4);`, [name, image, stockTotal, pricePerDay]
         )
-        return res.sendStatus(201)
+        res.sendStatus(201)
     
-
-
     } catch (error) {
         res.status(500).send(error.message)
     }
