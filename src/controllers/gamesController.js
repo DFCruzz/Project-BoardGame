@@ -21,7 +21,7 @@ export async function addNewGame (req, res) {
         )
 
         if(isGameListed.rowCount > 0) {
-            return res.status(400).send("Jogo já cadastrado!")
+            return res.status(409).send("Jogo já cadastrado!")
         }
 
         await database.query(

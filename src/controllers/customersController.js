@@ -78,7 +78,7 @@ export async function updateCustomer (req, res) {
         }
 
         await database.query(
-            `UPDATE customers SET name = $1, phone = $2, cpf = $3, birthday = $4 WHERE id = $5;` [name, phone, cpf, birthday, id]
+            `UPDATE customers SET name = $1, phone = $2, cpf = $3, birthday = $4 WHERE id = $5;`, [name, phone, cpf, birthday, id]
         )
 
         res.sendStatus(200)
