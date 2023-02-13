@@ -7,8 +7,8 @@ const rentalsRoute = Router()
 
 rentalsRoute.get("/rentals", getRentals)
 rentalsRoute.post("/rentals", validationSchema(rentalSchema), rentGame)
-rentalsRoute.post("/rentals/:id/return", finishRent)
-rentalsRoute.delete("/rentals/:id", deleteRent)
+rentalsRoute.post("/rentals/:id?/return", finishRent)
+rentalsRoute.delete("/rentals/:id?", deleteRent)
 
 
 export default rentalsRoute

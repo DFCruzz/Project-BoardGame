@@ -109,7 +109,7 @@ export async function deleteRent(req, res) {
             return res.sendStatus(400)
         }
 
-        if (checkRent.rows[0].returnDate === null) {
+        if (!checkRent.rows[0].returnDate === null) {
             return res.sendStatus(400)
         }
 
