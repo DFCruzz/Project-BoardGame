@@ -69,7 +69,7 @@ export async function finishRent(req, res) {
         const checkRent = await database.query(`SELECT * FROM rentals WHERE id = $1`, [id])
 
         if (checkRent.rowCount === 0) {
-            return res.sendStatus(400)
+            return res.sendStatus(404)
         }
 
         if (checkRent.rows[0].returnDate !== null) {
@@ -87,7 +87,7 @@ export async function finishRent(req, res) {
         if (isRentLate > 0) delayFee = isRentLate * rentCost
 
         await database.query(
-            `UPDATE rentals SET "returnDate" = $1, "delayFee" = $2, WHERE id = $3`, [todayDate, delayFee, id]
+            `UPDATE rentals SET "returnDate" = $1, "delayFee" = $2 WHERE id = $3`, [todayDate, delayFee, id]
         )
 
         return res.sendStatus(200)
@@ -106,10 +106,10 @@ export async function deleteRent(req, res) {
         const checkRent = await database.query(`SELECT * FROM rentals WHERE id = $1`, [id])
 
         if (checkRent.rowCount === 0) {
-            return res.sendStatus(400)
+            return res.sendStatus(404)
         }
 
-        if (!checkRent.rows[0].returnDate === null) {
+        if (checkRent.rows[0].returnDate === null) {
             return res.sendStatus(400)
         }
 
