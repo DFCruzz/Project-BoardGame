@@ -48,8 +48,8 @@ export async function rentGame (req, res) {
         const originalPrice = daysRented * checkGame.rows[0].pricePerDay
 
         await database.query(
-            `INSERT INTO rentals ("customerId", "gameId", "rentalDate", "daysRented", "returnDate", "originalPrice", "delayFee")
-            VALUES ($1, $2, $3, $4, null, ,$5, null)`,
+            `INSERT INTO rentals ("customerId", "gameId", "rentDate", "daysRented", "returnDate", "originalPrice", "delayFee")
+            VALUES ($1, $2, $3, $4, null, $5, null)`,
             [customerId, gameId, rentalDate, daysRented, originalPrice]
         )
 
