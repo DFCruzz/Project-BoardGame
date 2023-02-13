@@ -40,8 +40,8 @@ export async function rentGame (req, res) {
 
         const isGameAvailable = checkGame.rows[0].stockTotal
 
-        const checkStock = await database.query(`SELECT count("gameId") as stock FROM rentals WHERE "gameId" = $1`, [gameId])
-        if (isGameAvailable.rowCount === 0) {
+        const checkStock = await database.query(`SELECT count("gameId") AS stock FROM rentals WHERE "gameId" = $1`, [gameId])
+        if (isGameAvailable <= checkStock.rows[0].stock) {
             return res.status(400).send("Jogo não disponível para alugar")
         }
 
