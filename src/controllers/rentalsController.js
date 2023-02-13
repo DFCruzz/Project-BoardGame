@@ -6,7 +6,7 @@ export async function getRentals (req, res) {
     try {
         
         const rentalInfo = await database.query(`SELECT * FROM rentals`)
-        const customerInfo = await database.query(`SELECT id, name FROM customer`)
+        const customerInfo = await database.query(`SELECT id, name FROM customers`)
         const gameInfo = await database.query(`SELECT id, name FROM games`)
 
         const rentalsList = rentalInfo.rows.map(a => ({
