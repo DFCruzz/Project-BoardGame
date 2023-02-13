@@ -1,10 +1,10 @@
 import { database } from "../database/database.connection.js";
 import dayjs from "dayjs";
 
-export async function getRentals (req, res) {
+export async function getRentals(req, res) {
 
     try {
-        
+
         const rentalInfo = await database.query(`SELECT * FROM rentals`)
         const customerInfo = await database.query(`SELECT id, name FROM customers`)
         const gameInfo = await database.query(`SELECT id, name FROM games`)
@@ -23,7 +23,7 @@ export async function getRentals (req, res) {
     }
 }
 
-export async function rentGame (req, res) {
+export async function rentGame(req, res) {
     const { customerId, gameId, daysRented } = req.body
     const rentalDate = dayjs().format("YYYY-MM-DD")
 
@@ -54,6 +54,68 @@ export async function rentGame (req, res) {
         )
 
         res.sendStatus(201)
+
+    } catch (error) {
+        res.status(500).send(error.message)
+    }
+}
+
+export async function finishRent(req, res) {
+    const { id } = req.params
+    const todayDate = dayjs().format("YYYY-MM-DD")
+
+    try {
+
+        const checkRent = await database.query(`SELECT * FROM rentals WHERE id = $1`, [id])
+
+        if (checkRent.rowCount === 0) {
+            return res.sendStatus(400)
+        }
+
+        if (checkRent.rows[0].returnDate !== null) {
+            return res.sendStatus(400)
+        }
+
+        const rentCost = checkRent.rows[0].originalPrice / checkRent.rows[0].daysRented
+
+        const expireDate = dayjs(checkRent.rows[0].rentDate).add(checkRent.rows[0].daysRented, 'day').format("YYYY-MM-DD")
+
+        const isRentLate = dayjs(todayDate).diff(expireDate, 'day')
+
+        let delayFee = null
+
+        if (isRentLate > 0) delayFee = isRentLate * rentCost
+
+        await database.query(
+            `UPDATE rentals SET "returnDate" = $1, "delayFee" = $2, WHERE id = $3`, [todayDate, delayFee, id]
+        )
+
+        return res.sendStatus(200)
+
+
+    } catch (error) {
+        res.status(500).send(error.message)
+    }
+}
+
+export async function deleteRent(req, res) {
+    const { id } = req.params
+
+    try {
+        
+        const checkRent = await database.query(`SELECT * FROM rentals WHERE id = $1`, [id])
+
+        if (checkRent.rowCount === 0) {
+            return res.sendStatus(400)
+        }
+
+        if (checkRent.rows[0].returnDate === null) {
+            return res.sendStatus(400)
+        }
+
+        await database.query(`DELETE FROM rentals WHERE id = $1`, [id])
+
+        res.sendStatus(200)
 
     } catch (error) {
         res.status(500).send(error.message)
